@@ -1,0 +1,254 @@
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: #1f2933;
+    background:
+        radial-gradient(circle at top left, #fde68a 0, transparent 28%),
+        linear-gradient(135deg, #fff8ef 0%, #f5f7fb 55%, #e6eefc 100%);
+    min-height: 100vh;
+}
+
+.page-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 20px 48px;
+}
+
+.hero {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+}
+
+.hero p {
+    margin: 0;
+    max-width: 640px;
+    color: #52606d;
+}
+
+.panel-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.panel,
+.menu-card {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+    padding: 24px;
+    overflow-wrap: anywhere;
+}
+
+.history-stack {
+    display: grid;
+    gap: 18px;
+}
+
+.history-card {
+    display: grid;
+    gap: 10px;
+}
+
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+label {
+    display: block;
+    margin-bottom: 14px;
+    font-weight: 600;
+}
+
+input,
+select,
+button,
+textarea {
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 8px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #cbd2d9;
+    font: inherit;
+}
+
+button {
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(135deg, #d97706, #ea580c);
+    color: #fff;
+    font-weight: 700;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(217, 119, 6, 0.22);
+}
+
+.nav-button {
+    width: auto;
+    min-width: 120px;
+    background: linear-gradient(135deg, #0f766e, #0ea5a4);
+}
+
+.button-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.button-row a,
+.inline-link {
+    color: #b45309;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.muted {
+    color: #52606d;
+}
+
+.price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #9a3412;
+}
+
+.cart-list,
+.summary-list {
+    display: grid;
+    gap: 12px;
+    padding: 0;
+    list-style: none;
+}
+
+.cart-row,
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #fff7ed;
+}
+
+.cart-row span,
+.summary-row span {
+    word-break: break-word;
+}
+
+.status-box {
+    margin-top: 16px;
+    padding: 14px 16px;
+    border-radius: 14px;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.error-box {
+    background: #fff1f2;
+    color: #be123c;
+}
+
+.pill {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: #ffedd5;
+    color: #9a3412;
+    font-weight: 700;
+}
+
+@media (max-width: 640px) {
+    .page-shell {
+        padding: 20px 14px 28px;
+    }
+
+    .hero {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .panel,
+    .menu-card {
+        padding: 18px;
+        border-radius: 16px;
+    }
+
+    .button-row {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .button-row a,
+    .inline-link {
+        display: block;
+        width: 100%;
+        text-align: center;
+        padding: 12px 14px;
+        border-radius: 12px;
+        background: #fff7ed;
+        box-sizing: border-box;
+    }
+
+    .nav-button,
+    button {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .panel-grid,
+    .menu-grid,
+    .history-stack {
+        grid-template-columns: 1fr;
+    }
+
+    .cart-row,
+    .summary-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    input,
+    select,
+    button,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 380px) {
+    .page-shell {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .hero h1 {
+        font-size: 1.7rem;
+    }
+
+    .pill {
+        width: 100%;
+        text-align: center;
+    }
+}

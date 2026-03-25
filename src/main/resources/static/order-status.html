@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Status | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="order-status">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Order Status</h1>
+            <p>Open this page directly from the MailHog email link to check the current status of your order.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/index.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/login.html">Forward</button>
+            <a class="inline-link" href="/index.html">Home</a>
+        </div>
+    </section>
+
+    <section id="tracking-status-box"></section>
+    <section class="panel">
+        <h2>Tracking Lookup</h2>
+        <p><strong>Tracking number:</strong> <span id="tracking-page-number">Loading...</span></p>
+        <div id="tracking-details"></div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmation | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="confirmation">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Order Confirmed</h1>
+            <p>Your tracking number is ready, and the same information is sent to MailHog when it is running on localhost:1025.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/checkout.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/index.html">Forward</button>
+            <a class="inline-link" href="/menu.html">Return to menu</a>
+            <button id="confirmation-logout-button" type="button">Logout</button>
+        </div>
+    </section>
+
+    <section class="panel-grid">
+        <section class="panel">
+            <h2>Receipt</h2>
+            <p><strong>Tracking number:</strong> <span id="tracking-number"></span></p>
+            <p><strong>Status:</strong> <span id="receipt-status"></span></p>
+            <p><strong>Email:</strong> <span id="receipt-email"></span></p>
+            <p><strong>Shipping address:</strong> <span id="receipt-address"></span></p>
+            <p><strong>Card:</strong> <span id="receipt-card"></span></p>
+            <p><strong>Total:</strong> <span id="receipt-total"></span></p>
+            <div id="mailhog-note" class="status-box"></div>
+        </section>
+
+        <section class="panel">
+            <h2>Ordered Items</h2>
+            <ul id="confirmation-summary" class="summary-list"></ul>
+        </section>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

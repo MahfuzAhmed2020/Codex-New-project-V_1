@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="menu">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Order Menu</h1>
+            <p>Welcome, <strong id="welcome-name"></strong>. Choose menu items, add them to the cart, then continue to checkout.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/login.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/checkout.html">Forward</button>
+            <a class="inline-link" href="/checkout.html">Go to checkout</a>
+            <a class="inline-link" href="/order-history.html">Order history</a>
+            <button id="logout-button" type="button">Logout</button>
+        </div>
+    </section>
+
+    <section class="panel-grid">
+        <section class="panel">
+            <h2>Menu Items</h2>
+            <div id="menu-items" class="menu-grid"></div>
+            <div id="menu-message" hidden></div>
+        </section>
+
+        <section class="panel">
+            <h2>Cart</h2>
+            <ul id="cart-items" class="cart-list"></ul>
+            <p><strong>Total:</strong> <span id="cart-total">$0.00</span></p>
+            <div class="button-row">
+                <a class="inline-link" href="/checkout.html">Proceed to checkout</a>
+                <a class="inline-link" href="/api/docs/urls">View API URLs</a>
+            </div>
+        </section>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

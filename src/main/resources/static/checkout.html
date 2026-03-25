@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="checkout">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Checkout</h1>
+            <p>Complete payment using one of the five approved addresses and one of the five approved cards.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/menu.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/order-history.html">Forward</button>
+            <a class="inline-link" href="/menu.html">Back to menu</a>
+            <a class="inline-link" href="/order-history.html">Order history</a>
+            <button id="checkout-logout-button" type="button">Logout</button>
+        </div>
+    </section>
+
+    <section class="panel-grid">
+        <section class="panel">
+            <h2>Approved Checkout Options</h2>
+            <form id="checkout-form">
+                <label>
+                    Shipping address
+                    <select id="shippingAddress" required></select>
+                </label>
+                <label>
+                    Card number
+                    <select id="cardNumber" required></select>
+                </label>
+                <button type="submit">Confirm checkout</button>
+            </form>
+            <div id="checkout-message" hidden></div>
+        </section>
+
+        <section class="panel">
+            <h2>Order Summary</h2>
+            <ul id="checkout-summary" class="summary-list"></ul>
+            <p><strong>Total:</strong> <span id="checkout-total">$0.00</span></p>
+        </section>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

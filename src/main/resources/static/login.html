@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="login">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Login To Order</h1>
+            <p>Use the email and password from registration to reach the order menu page.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/index.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/menu.html">Forward</button>
+            <span class="pill">Login</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <form id="login-form">
+            <label>Email<input name="email" type="email" required></label>
+            <label>Password<input name="password" type="password" required></label>
+            <div class="button-row">
+                <button type="submit">Login</button>
+                <a class="inline-link" href="/index.html">Back to registration</a>
+            </div>
+        </form>
+        <div id="login-message" hidden></div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

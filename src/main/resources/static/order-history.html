@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order History | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="order-history">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Order History</h1>
+            <p>Review completed orders for <strong id="history-name"></strong> right after checkout and any time you come back.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/checkout.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/menu.html">Forward</button>
+            <a class="inline-link" href="/menu.html">Return to menu</a>
+            <button id="history-logout-button" type="button">Logout</button>
+        </div>
+    </section>
+
+    <section id="latest-order-summary"></section>
+    <section id="order-history-list" class="history-stack"></section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

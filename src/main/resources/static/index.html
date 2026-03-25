@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="register">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Create Your Account</h1>
+            <p>Register with your personal details, then sign in to browse the menu, build a cart, and complete checkout with the approved cards and addresses.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/index.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/login.html">Forward</button>
+            <span class="pill">Registration</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <form id="register-form">
+            <div class="panel-grid">
+                <label>First name<input name="firstName" required></label>
+                <label>Last name<input name="lastName" required></label>
+                <label>Address<input name="address" required></label>
+                <label>Zip<input name="zip" required></label>
+                <label>Phone<input name="phone" required></label>
+                <label>Email<input name="email" type="email" required></label>
+                <label>Password<input name="password" type="password" required></label>
+                <label>Re-enter password<input name="confirmPassword" type="password" required></label>
+            </div>
+            <div class="button-row">
+                <button type="submit">Register</button>
+                <a class="inline-link" href="/login.html">Already have an account? Login</a>
+            </div>
+        </form>
+        <div id="register-message" hidden></div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
