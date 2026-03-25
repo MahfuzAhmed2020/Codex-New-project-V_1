@@ -591,16 +591,26 @@ async function loadProfilePage() {
   });
 }
 
+async function logoutUser() {
+  try {
+    await api("/auth/logout", {
+      method: "POST",
+    });
+  } finally {
+    sessionStorage.removeItem("demoUser");
+    sessionStorage.removeItem("demoReceipt");
+    navigateTo("/login.html");
+  }
+}
+
 function attachLogout(buttonId) {
   const button = document.getElementById(buttonId);
   if (!button) {
     return;
   }
 
-  button.addEventListener("click", () => {
-    sessionStorage.removeItem("demoUser");
-    sessionStorage.removeItem("demoReceipt");
-    navigateTo("/login.html");
+  button.addEventListener("click", async () => {
+    await logoutUser();
   });
 }
 
@@ -622,6 +632,7 @@ window.addEventListener("DOMContentLoaded", () => {
   if (page === "order-status") loadOrderStatusPage();
   if (page === "profile") { loadProfilePage(); attachLogout("profile-logout-button"); }
 });
+
 
 
 

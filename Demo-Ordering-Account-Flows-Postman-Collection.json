@@ -1,134 +1,230 @@
 {
-  "info": {
-    "_postman_id": "e6d6c6a9-4f39-47b5-9b92-accounts-collection",
-    "name": "Demo Ordering Account Flows",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "http://localhost:8080"
-    },
-    {
-      "key": "userId",
-      "value": "1"
-    },
-    {
-      "key": "confirmationToken",
-      "value": "paste-token-from-mailhog-link"
-    },
-    {
-      "key": "resetToken",
-      "value": "paste-token-from-mailhog-link"
-    }
-  ],
-  "item": [
-    {
-      "name": "Register User",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"firstName\": \"Ava\",\n  \"lastName\": \"Johnson\",\n  \"address\": \"123 Main St, New York, NY 10001\",\n  \"zip\": \"10001\",\n  \"phone\": \"555-123-4567\",\n  \"email\": \"ava@example.com\",\n  \"password\": \"secret123\",\n  \"confirmPassword\": \"secret123\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/auth/register",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "register"]
-        }
-      }
-    },
-    {
-      "name": "Confirm Email",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"token\": \"{{confirmationToken}}\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/auth/confirm-email",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "confirm-email"]
-        }
-      }
-    },
-    {
-      "name": "Login",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"ava@example.com\",\n  \"password\": \"secret123\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/auth/login",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "login"]
-        }
-      }
-    },
-    {
-      "name": "Forgot Password",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"ava@example.com\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/auth/forgot-password",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "forgot-password"]
-        }
-      }
-    },
-    {
-      "name": "Reset Password",
-      "request": {
-        "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"newsecret123\",\n  \"confirmPassword\": \"newsecret123\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/auth/reset-password",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "auth", "reset-password"]
-        }
-      }
-    },
-    {
-      "name": "Get User Profile",
-      "request": {
-        "method": "GET",
-        "url": {
-          "raw": "{{baseUrl}}/api/users/{{userId}}",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "users", "{{userId}}"]
-        }
-      }
-    },
-    {
-      "name": "Update User Profile",
-      "request": {
-        "method": "PUT",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"firstName\": \"Ava\",\n  \"lastName\": \"Johnson\",\n  \"address\": \"500 Park Ave, New York, NY 10022\",\n  \"zip\": \"10022\",\n  \"phone\": \"555-999-1234\",\n  \"email\": \"ava.updated@example.com\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/users/{{userId}}/profile",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "users", "{{userId}}", "profile"]
-        }
-      }
-    }
-  ]
+    "info":  {
+                 "_postman_id":  "e6d6c6a9-4f39-47b5-9b92-accounts-collection",
+                 "name":  "Demo Ordering Account Flows",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+             },
+    "variable":  [
+                     {
+                         "key":  "baseUrl",
+                         "value":  "http://localhost:8080"
+                     },
+                     {
+                         "key":  "userId",
+                         "value":  "1"
+                     },
+                     {
+                         "key":  "confirmationToken",
+                         "value":  "paste-token-from-mailhog-link"
+                     },
+                     {
+                         "key":  "resetToken",
+                         "value":  "paste-token-from-mailhog-link"
+                     }
+                 ],
+    "item":  [
+                 {
+                     "name":  "Register User",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"firstName\": \"Ava\",\n  \"lastName\": \"Johnson\",\n  \"address\": \"123 Main St, New York, NY 10001\",\n  \"zip\": \"10001\",\n  \"phone\": \"555-123-4567\",\n  \"email\": \"ava@example.com\",\n  \"password\": \"secret123\",\n  \"confirmPassword\": \"secret123\"\n}"
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/auth/register",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "auth",
+                                                              "register"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Confirm Email",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"token\": \"{{confirmationToken}}\"\n}"
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/auth/confirm-email",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "auth",
+                                                              "confirm-email"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Login",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"email\": \"ava@example.com\",\n  \"password\": \"secret123\"\n}"
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/auth/login",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "auth",
+                                                              "login"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Logout",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/auth/logout",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "auth",
+                                                              "logout"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Forgot Password",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"email\": \"ava@example.com\"\n}"
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/auth/forgot-password",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "auth",
+                                                              "forgot-password"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Reset Password",
+                     "request":  {
+                                     "method":  "POST",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"token\": \"{{resetToken}}\",\n  \"password\": \"newsecret123\",\n  \"confirmPassword\": \"newsecret123\"\n}"
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/auth/reset-password",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "auth",
+                                                              "reset-password"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Get User Profile",
+                     "request":  {
+                                     "method":  "GET",
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/users/{{userId}}",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "users",
+                                                              "{{userId}}"
+                                                          ]
+                                             }
+                                 }
+                 },
+                 {
+                     "name":  "Update User Profile",
+                     "request":  {
+                                     "method":  "PUT",
+                                     "header":  [
+                                                    {
+                                                        "key":  "Content-Type",
+                                                        "value":  "application/json"
+                                                    }
+                                                ],
+                                     "body":  {
+                                                  "mode":  "raw",
+                                                  "raw":  "{\n  \"firstName\": \"Ava\",\n  \"lastName\": \"Johnson\",\n  \"address\": \"500 Park Ave, New York, NY 10022\",\n  \"zip\": \"10022\",\n  \"phone\": \"555-999-1234\",\n  \"email\": \"ava.updated@example.com\"\n}"
+                                              },
+                                     "url":  {
+                                                 "raw":  "{{baseUrl}}/api/users/{{userId}}/profile",
+                                                 "host":  [
+                                                              "{{baseUrl}}"
+                                                          ],
+                                                 "path":  [
+                                                              "api",
+                                                              "users",
+                                                              "{{userId}}",
+                                                              "profile"
+                                                          ]
+                                             }
+                                 }
+                 }
+             ]
 }

@@ -41,7 +41,8 @@ public class SystemController {
                         "POST /api/auth/login",
                         "POST /api/auth/forgot-password",
                         "POST /api/auth/reset-password",
-                        "POST /api/auth/confirm-email"),
+                        "POST /api/auth/confirm-email",
+                        "POST /api/auth/logout"),
                 "users", List.of(
                         "GET /api/users",
                         "GET /api/users/{userId}",
@@ -71,3 +72,4 @@ public class SystemController {
                         "DELETE /api/orders/{id}"));
     }
 }
+

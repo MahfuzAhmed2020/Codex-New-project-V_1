@@ -52,4 +52,10 @@ public class AuthController {
     public ApiMessage confirmEmail(@RequestBody ConfirmEmailRequest request) {
         return userService.confirmEmail(request);
     }
+
+    @PostMapping("/logout")
+    public ApiMessage logout() {
+        return new ApiMessage("Logged out successfully.");
+    }
 }
+

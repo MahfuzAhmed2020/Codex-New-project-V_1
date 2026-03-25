@@ -66,6 +66,10 @@ Payload:
   "token": "paste-token-from-mailhog-link"
 }
 
+POST http://localhost:8080/api/auth/logout
+Payload:
+No body required
+
 User APIs
 ---------
 6. Get All Users
@@ -206,3 +210,4 @@ Notes
 - Replace tracking numbers with the tracking number returned by checkout.
 - Use GET http://localhost:8080/api/menu first to see available menu item ids.
 - Use GET http://localhost:8080/api/docs/urls to view the live endpoint list from the app.
+

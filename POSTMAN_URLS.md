@@ -21,6 +21,7 @@ Auth:
 - `POST /api/auth/forgot-password`
 - `POST /api/auth/reset-password`
 - `POST /api/auth/confirm-email`
+- `POST /api/auth/logout`
 
 Users:
 - `GET /api/users`
@@ -118,3 +119,4 @@ Sample checkout body:
   "cardNumber": "4111111111111111"
 }
 ```
+

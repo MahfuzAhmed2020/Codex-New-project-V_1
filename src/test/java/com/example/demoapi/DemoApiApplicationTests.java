@@ -584,6 +584,13 @@ class DemoApiApplicationTests {
     }
 
     @Test
+    void logoutReturnsSuccessMessage() throws Exception {
+        mockMvc.perform(post("/api/auth/logout"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Logged out successfully."));
+    }
+
+    @Test
     void updateProfileChangesProfileFields() throws Exception {
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -621,5 +628,6 @@ class DemoApiApplicationTests {
                 .andExpect(jsonPath("$.emailConfirmed").value(false));
     }
 }
+
 
 
