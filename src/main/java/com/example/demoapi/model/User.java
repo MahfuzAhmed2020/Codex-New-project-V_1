@@ -8,5 +8,6 @@ public record User(
         String zip,
         String phone,
         String email,
-        String password) {
+        String password,
+        boolean emailConfirmed) {
 }

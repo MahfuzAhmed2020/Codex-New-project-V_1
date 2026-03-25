@@ -33,7 +33,7 @@ async function api(path, options = {}) {
     let message = "Request failed.";
     try {
       const body = await response.json();
-      message = body.error || message;
+      message = body.error || body.message || message;
     } catch (error) {
       message = response.statusText || message;
     }
@@ -78,15 +78,45 @@ function attachPageNavigation() {
   });
 }
 
-function getTrackingFromUrl() {
+function attachPasswordToggles() {
+  document.querySelectorAll("[data-password-target]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const targetId = button.dataset.passwordTarget;
+      const input = document.getElementById(targetId);
+      if (!input) {
+        return;
+      }
+      const showPassword = input.type === "password";
+      input.type = showPassword ? "text" : "password";
+      button.textContent = showPassword ? "Hide" : "Show";
+    });
+  });
+}
+
+function renderCartFeedback(message, isError = false) {
+  ["menu-message", "checkout-message", "cart-message"].forEach((targetId) => {
+    const target = document.getElementById(targetId);
+    if (!target) {
+      return;
+    }
+    if (!message) {
+      target.hidden = true;
+      target.textContent = "";
+      return;
+    }
+    target.textContent = message;
+    target.className = isError ? "status-box error-box" : "status-box";
+    target.hidden = false;
+  });
+}
+function getQueryParam(name) {
   const params = new URLSearchParams(window.location.search);
-  return params.get("tracking");
+  return params.get(name);
 }
 
 async function handleRegister(event) {
   event.preventDefault();
   clearMessage("register-message");
-
   const form = event.currentTarget;
   const payload = Object.fromEntries(new FormData(form).entries());
 
@@ -95,11 +125,9 @@ async function handleRegister(event) {
       method: "POST",
       body: JSON.stringify(payload),
     });
-    renderMessage("register-message", "Registration successful. Continue to the login page.");
+    renderMessage("register-message", "Registration successful. Check MailHog for the confirmation email, then continue to login.");
     form.reset();
-    setTimeout(() => {
-      navigateTo("/login.html");
-    }, 900);
+    setTimeout(() => navigateTo("/login.html"), 1200);
   } catch (error) {
     renderMessage("register-message", error.message, true);
   }
@@ -108,9 +136,7 @@ async function handleRegister(event) {
 async function handleLogin(event) {
   event.preventDefault();
   clearMessage("login-message");
-
-  const form = event.currentTarget;
-  const payload = Object.fromEntries(new FormData(form).entries());
+  const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
 
   try {
     const session = await api("/auth/login", {
@@ -124,6 +150,58 @@ async function handleLogin(event) {
   }
 }
 
+async function handleForgotPassword(event) {
+  event.preventDefault();
+  clearMessage("forgot-message");
+  const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+
+  try {
+    const result = await api("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    renderMessage("forgot-message", result.message || "If the email exists, a reset link was sent.");
+  } catch (error) {
+    renderMessage("forgot-message", error.message, true);
+  }
+}
+
+async function handleResetPassword(event) {
+  event.preventDefault();
+  clearMessage("reset-message");
+  const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+  payload.token = getQueryParam("token");
+
+  try {
+    const result = await api("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+    renderMessage("reset-message", result.message || "Password reset successfully.");
+    setTimeout(() => navigateTo("/login.html"), 1200);
+  } catch (error) {
+    renderMessage("reset-message", error.message, true);
+  }
+}
+
+async function loadAccountConfirmedPage() {
+  const token = getQueryParam("token");
+  if (!token) {
+    renderMessage("confirm-message", "Confirmation token is missing from the URL.", true);
+    return;
+  }
+
+  try {
+    const result = await api("/auth/confirm-email", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+    renderMessage("confirm-message", result.message || "Email confirmed successfully.");
+  } catch (error) {
+    renderMessage("confirm-message", error.message, true);
+  }
+}
+
 async function loadMenuPage() {
   const session = getSession();
   if (!session) {
@@ -132,12 +210,7 @@ async function loadMenuPage() {
   }
 
   document.getElementById("welcome-name").textContent = `${session.firstName} ${session.lastName}`;
-
-  const [menu, cart] = await Promise.all([
-    api("/menu"),
-    api(`/users/${session.userId}/cart`),
-  ]);
-
+  const [menu, cart] = await Promise.all([api("/menu"), api(`/users/${session.userId}/cart`)]);
   const menuContainer = document.getElementById("menu-items");
   menuContainer.innerHTML = "";
 
@@ -170,9 +243,9 @@ async function loadMenuPage() {
           body: JSON.stringify({ menuItemId, quantity }),
         });
         renderCart(updatedCart);
-        renderMessage("menu-message", "Item added to cart.");
+        renderCartFeedback("Item added to cart.");
       } catch (error) {
-        renderMessage("menu-message", error.message, true);
+        renderCartFeedback(error.message, true);
       }
     });
   });
@@ -180,10 +253,67 @@ async function loadMenuPage() {
   renderCart(cart);
 }
 
+async function changeCartQuantity(menuItemId, nextQuantity) {
+  const session = getSession();
+  if (!session) {
+    navigateTo("/login.html");
+    return;
+  }
+
+  clearMessage("menu-message");
+  clearMessage("checkout-message");
+
+  try {
+    let updatedCart;
+    if (nextQuantity <= 0) {
+      await api(`/users/${session.userId}/cart/items/${menuItemId}`, {
+        method: "DELETE",
+      });
+      updatedCart = await api(`/users/${session.userId}/cart`);
+      renderCartFeedback("Item removed from cart.");
+    } else {
+      updatedCart = await api(`/users/${session.userId}/cart/items/${menuItemId}`, {
+        method: "PATCH",
+        body: JSON.stringify({ quantity: nextQuantity }),
+      });
+      renderCartFeedback("Cart updated.");
+    }
+
+    renderCart(updatedCart);
+    renderCheckoutSummary(updatedCart);
+
+    if (document.body.dataset.page === "checkout" && !updatedCart.items.length) {
+      navigateTo("/menu.html");
+    }
+  } catch (error) {
+    renderMessage("menu-message", error.message, true);
+    renderMessage("checkout-message", error.message, true);
+  }
+}
+
+function attachCartQuantityHandlers(container) {
+  container.querySelectorAll("[data-cart-action]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      const menuItemId = Number(button.dataset.itemId);
+      const currentQuantity = Number(button.dataset.quantity);
+      let nextQuantity;
+
+      if (button.dataset.cartAction === "increase") {
+        nextQuantity = currentQuantity + 1;
+      } else if (button.dataset.cartAction === "remove") {
+        nextQuantity = 0;
+      } else {
+        nextQuantity = currentQuantity - 1;
+      }
+
+      await changeCartQuantity(menuItemId, nextQuantity);
+    });
+  });
+}
+
 function renderCart(cart) {
   const cartList = document.getElementById("cart-items");
   const cartTotal = document.getElementById("cart-total");
-
   if (!cartList || !cartTotal) {
     return;
   }
@@ -196,14 +326,56 @@ function renderCart(cart) {
       const row = document.createElement("li");
       row.className = "cart-row";
       row.innerHTML = `
-        <span>${item.name} x ${item.quantity}</span>
-        <span>$${Number(item.lineTotal).toFixed(2)}</span>
+        <div class="cart-item-info">
+          <span>${item.name}</span>
+          <span class="muted">$${Number(item.price).toFixed(2)} each</span>
+        </div>
+        <div class="cart-quantity-controls">
+          <button type="button" class="quantity-button" data-cart-action="decrease" data-item-id="${item.menuItemId}" data-quantity="${item.quantity}">-</button>
+          <span class="cart-quantity-value">${item.quantity}</span>
+          <button type="button" class="quantity-button" data-cart-action="increase" data-item-id="${item.menuItemId}" data-quantity="${item.quantity}">+</button>
+          <button type="button" class="remove-button" data-cart-action="remove" data-item-id="${item.menuItemId}" data-quantity="${item.quantity}">Remove</button>
+        </div>
+        <span>${Number(item.lineTotal).toFixed(2)}</span>
       `;
       cartList.appendChild(row);
     });
+
+    attachCartQuantityHandlers(cartList);
   }
 
   cartTotal.textContent = `$${Number(cart.totalAmount).toFixed(2)}`;
+}
+
+function renderCheckoutSummary(cart) {
+  const summary = document.getElementById("checkout-summary");
+  const total = document.getElementById("checkout-total");
+  if (!summary || !total) {
+    return;
+  }
+
+  summary.innerHTML = "";
+  cart.items.forEach((item) => {
+    const row = document.createElement("li");
+    row.className = "summary-row";
+    row.innerHTML = `
+      <div class="cart-item-info">
+        <span>${item.name}</span>
+        <span class="muted">$${Number(item.price).toFixed(2)} each</span>
+      </div>
+      <div class="cart-quantity-controls">
+        <button type="button" class="quantity-button" data-cart-action="decrease" data-item-id="${item.menuItemId}" data-quantity="${item.quantity}">-</button>
+        <span class="cart-quantity-value">${item.quantity}</span>
+        <button type="button" class="quantity-button" data-cart-action="increase" data-item-id="${item.menuItemId}" data-quantity="${item.quantity}">+</button>
+        <button type="button" class="remove-button" data-cart-action="remove" data-item-id="${item.menuItemId}" data-quantity="${item.quantity}">Remove</button>
+      </div>
+      <span>${Number(item.lineTotal).toFixed(2)}</span>
+    `;
+    summary.appendChild(row);
+  });
+
+  attachCartQuantityHandlers(summary);
+  total.textContent = `$${Number(cart.totalAmount).toFixed(2)}`;
 }
 
 async function loadCheckoutPage() {
@@ -213,11 +385,7 @@ async function loadCheckoutPage() {
     return;
   }
 
-  const [whitelist, cart] = await Promise.all([
-    api("/checkout/whitelist"),
-    api(`/users/${session.userId}/cart`),
-  ]);
-
+  const [whitelist, cart] = await Promise.all([api("/checkout/whitelist"), api(`/users/${session.userId}/cart`)]);
   if (!cart.items.length) {
     navigateTo("/menu.html");
     return;
@@ -225,14 +393,12 @@ async function loadCheckoutPage() {
 
   const addressSelect = document.getElementById("shippingAddress");
   const cardSelect = document.getElementById("cardNumber");
-
   whitelist.addresses.forEach((address) => {
     const option = document.createElement("option");
     option.value = address;
     option.textContent = address;
     addressSelect.appendChild(option);
   });
-
   whitelist.cards.forEach((card) => {
     const option = document.createElement("option");
     option.value = card;
@@ -240,15 +406,7 @@ async function loadCheckoutPage() {
     cardSelect.appendChild(option);
   });
 
-  const summary = document.getElementById("checkout-summary");
-  summary.innerHTML = "";
-  cart.items.forEach((item) => {
-    const row = document.createElement("li");
-    row.className = "summary-row";
-    row.innerHTML = `<span>${item.name} x ${item.quantity}</span><span>$${Number(item.lineTotal).toFixed(2)}</span>`;
-    summary.appendChild(row);
-  });
-  document.getElementById("checkout-total").textContent = `$${Number(cart.totalAmount).toFixed(2)}`;
+  renderCheckoutSummary(cart);
 
   document.getElementById("checkout-form").addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -302,7 +460,6 @@ async function loadOrderHistoryPage() {
   const receipt = getReceipt();
   const historyContainer = document.getElementById("order-history-list");
   const latestSummary = document.getElementById("latest-order-summary");
-
   document.getElementById("history-name").textContent = `${session.firstName} ${session.lastName}`;
   historyContainer.innerHTML = "";
 
@@ -323,14 +480,11 @@ async function loadOrderHistoryPage() {
     </div>
   `;
 
-  const reversed = [...orders].reverse();
-  historyContainer.innerHTML = reversed
-    .map((order) => renderOrderHistoryCard(order, order.id === latestOrder.id))
-    .join("");
+  historyContainer.innerHTML = [...orders].reverse().map((order) => renderOrderHistoryCard(order, order.id === latestOrder.id)).join("");
 }
 
 async function loadOrderStatusPage() {
-  const trackingNumber = getTrackingFromUrl();
+  const trackingNumber = getQueryParam("tracking");
   const statusBox = document.getElementById("tracking-status-box");
   const detailsBox = document.getElementById("tracking-details");
 
@@ -353,6 +507,25 @@ async function loadOrderStatusPage() {
     statusBox.innerHTML = `<div class="status-box">Order status loaded successfully.</div>`;
   } catch (error) {
     statusBox.innerHTML = `<div class="status-box error-box">${error.message}</div>`;
+  }
+}
+
+
+async function loadCartPage() {
+  const session = getSession();
+  if (!session) {
+    navigateTo("/login.html");
+    return;
+  }
+
+  document.getElementById("cart-page-name").textContent = `${session.firstName} ${session.lastName}`;
+  const cart = await api(`/users/${session.userId}/cart`);
+  renderCart(cart);
+
+  if (!cart.items.length) {
+    renderCartFeedback("Your cart is empty. Add items from the menu to begin.");
+  } else {
+    renderCartFeedback("");
   }
 }
 
@@ -382,6 +555,41 @@ function loadConfirmationPage() {
     summary.appendChild(row);
   });
 }
+async function loadProfilePage() {
+  const session = getSession();
+  if (!session) {
+    navigateTo("/login.html");
+    return;
+  }
+
+  const profile = await api(`/users/${session.userId}`);
+  document.getElementById("profile-status-pill").textContent = profile.emailConfirmed ? "Email Confirmed" : "Email Not Confirmed";
+  const form = document.getElementById("profile-form");
+  form.firstName.value = profile.firstName;
+  form.lastName.value = profile.lastName;
+  form.address.value = profile.address;
+  form.zip.value = profile.zip;
+  form.phone.value = profile.phone;
+  form.email.value = profile.email;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearMessage("profile-message");
+    const payload = Object.fromEntries(new FormData(form).entries());
+
+    try {
+      const updatedProfile = await api(`/users/${session.userId}/profile`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+      });
+      saveSession({ ...session, firstName: updatedProfile.firstName, lastName: updatedProfile.lastName, email: updatedProfile.email });
+      document.getElementById("profile-status-pill").textContent = updatedProfile.emailConfirmed ? "Email Confirmed" : "Email Not Confirmed";
+      renderMessage("profile-message", updatedProfile.emailConfirmed ? "Profile updated successfully." : "Profile updated. Check MailHog if you changed the email address to confirm it.");
+    } catch (error) {
+      renderMessage("profile-message", error.message, true);
+    }
+  });
+}
 
 function attachLogout(buttonId) {
   const button = document.getElementById(buttonId);
@@ -399,36 +607,28 @@ function attachLogout(buttonId) {
 window.addEventListener("DOMContentLoaded", () => {
   const page = document.body.dataset.page;
   attachPageNavigation();
+  attachPasswordToggles();
 
-  if (page === "register") {
-    document.getElementById("register-form").addEventListener("submit", handleRegister);
-  }
-
-  if (page === "login") {
-    document.getElementById("login-form").addEventListener("submit", handleLogin);
-  }
-
-  if (page === "menu") {
-    loadMenuPage();
-    attachLogout("logout-button");
-  }
-
-  if (page === "checkout") {
-    loadCheckoutPage();
-    attachLogout("checkout-logout-button");
-  }
-
-  if (page === "confirmation") {
-    loadConfirmationPage();
-    attachLogout("confirmation-logout-button");
-  }
-
-  if (page === "order-history") {
-    loadOrderHistoryPage();
-    attachLogout("history-logout-button");
-  }
-
-  if (page === "order-status") {
-    loadOrderStatusPage();
-  }
+  if (page === "register") document.getElementById("register-form").addEventListener("submit", handleRegister);
+  if (page === "login") document.getElementById("login-form").addEventListener("submit", handleLogin);
+  if (page === "forgot-password") document.getElementById("forgot-password-form").addEventListener("submit", handleForgotPassword);
+  if (page === "reset-password") document.getElementById("reset-password-form").addEventListener("submit", handleResetPassword);
+  if (page === "account-confirmed") loadAccountConfirmedPage();
+  if (page === "menu") { loadMenuPage(); attachLogout("logout-button"); }
+  if (page === "cart") { loadCartPage(); attachLogout("cart-logout-button"); }
+  if (page === "checkout") { loadCheckoutPage(); attachLogout("checkout-logout-button"); }
+  if (page === "confirmation") { loadConfirmationPage(); attachLogout("confirmation-logout-button"); }
+  if (page === "order-history") { loadOrderHistoryPage(); attachLogout("history-logout-button"); }
+  if (page === "order-status") loadOrderStatusPage();
+  if (page === "profile") { loadProfilePage(); attachLogout("profile-logout-button"); }
 });
+
+
+
+
+
+
+
+
+
+

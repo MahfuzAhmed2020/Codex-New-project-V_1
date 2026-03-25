@@ -27,12 +27,26 @@ public class SystemController {
                 "frontend", List.of(
                         "/index.html",
                         "/login.html",
+                        "/forgot-password.html",
+                        "/reset-password.html?token=<token>",
+                        "/account-confirmed.html?token=<token>",
+                        "/profile.html",
                         "/menu.html",
                         "/checkout.html",
-                        "/confirmation.html"),
+                        "/confirmation.html",
+                        "/order-history.html",
+                        "/order-status.html?tracking=<trackingNumber>"),
                 "auth", List.of(
                         "POST /api/auth/register",
-                        "POST /api/auth/login"),
+                        "POST /api/auth/login",
+                        "POST /api/auth/forgot-password",
+                        "POST /api/auth/reset-password",
+                        "POST /api/auth/confirm-email"),
+                "users", List.of(
+                        "GET /api/users",
+                        "GET /api/users/{userId}",
+                        "PUT /api/users/{userId}/profile",
+                        "GET /api/users/{userId}/orders"),
                 "menu", List.of(
                         "GET /api/menu",
                         "GET /api/menu/{id}",
@@ -47,7 +61,6 @@ public class SystemController {
                 "checkout", List.of(
                         "GET /api/checkout/whitelist",
                         "POST /api/users/{userId}/checkout",
-                        "GET /api/users/{userId}/orders",
                         "GET /api/tracking/{trackingNumber}"),
                 "legacyOrders", List.of(
                         "GET /api/orders",

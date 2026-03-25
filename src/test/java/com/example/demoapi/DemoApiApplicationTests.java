@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import com.example.demoapi.service.CartService;
 import com.example.demoapi.service.CheckoutService;
@@ -485,4 +486,140 @@ class DemoApiApplicationTests {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Card number is not on the whitelist."));
     }
+
+    @Test
+    void registerAndConfirmEmailFlowWorks() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Mia",
+                                  "lastName": "Stone",
+                                  "address": "900 Elm St, New York, NY 10010",
+                                  "zip": "10010",
+                                  "phone": "555-101-2020",
+                                  "email": "mia@example.com",
+                                  "password": "secret123",
+                                  "confirmPassword": "secret123"
+                                }
+                                """))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.emailConfirmed").value(false));
+
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, String> confirmationTokens =
+                (java.util.Map<String, String>) ReflectionTestUtils.getField(userService, "confirmationTokens");
+        String token = confirmationTokens.keySet().iterator().next();
+
+        mockMvc.perform(post("/api/auth/confirm-email")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "token": "%s"
+                                }
+                                """.formatted(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Email confirmed successfully."));
+
+        mockMvc.perform(get("/api/users/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.emailConfirmed").value(true));
+    }
+
+    @Test
+    void forgotPasswordAndResetPasswordFlowWorks() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Liam",
+                                  "lastName": "Cole",
+                                  "address": "321 Cedar St, Brooklyn, NY 11211",
+                                  "zip": "11211",
+                                  "phone": "555-303-4040",
+                                  "email": "liam@example.com",
+                                  "password": "secret123",
+                                  "confirmPassword": "secret123"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(post("/api/auth/forgot-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "liam@example.com"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("If the email exists, a password reset link was sent."));
+
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, String> resetTokens =
+                (java.util.Map<String, String>) ReflectionTestUtils.getField(userService, "resetTokens");
+        String token = resetTokens.keySet().iterator().next();
+
+        mockMvc.perform(post("/api/auth/reset-password")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "token": "%s",
+                                  "password": "newsecret123",
+                                  "confirmPassword": "newsecret123"
+                                }
+                                """.formatted(token)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("Password reset successfully."));
+
+        mockMvc.perform(post("/api/auth/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "email": "liam@example.com",
+                                  "password": "newsecret123"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.userId").value(1));
+    }
+
+    @Test
+    void updateProfileChangesProfileFields() throws Exception {
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Emma",
+                                  "lastName": "Lane",
+                                  "address": "111 River Rd, Queens, NY 11101",
+                                  "zip": "11101",
+                                  "phone": "555-505-6060",
+                                  "email": "emma@example.com",
+                                  "password": "secret123",
+                                  "confirmPassword": "secret123"
+                                }
+                                """))
+                .andExpect(status().isCreated());
+
+        mockMvc.perform(put("/api/users/1/profile")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "firstName": "Emma",
+                                  "lastName": "Lane Parker",
+                                  "address": "222 River Rd, Queens, NY 11102",
+                                  "zip": "11102",
+                                  "phone": "555-707-8080",
+                                  "email": "emma.updated@example.com"
+                                }
+                                """))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lastName").value("Lane Parker"))
+                .andExpect(jsonPath("$.address").value("222 River Rd, Queens, NY 11102"))
+                .andExpect(jsonPath("$.phone").value("555-707-8080"))
+                .andExpect(jsonPath("$.email").value("emma.updated@example.com"))
+                .andExpect(jsonPath("$.emailConfirmed").value(false));
+    }
 }
+
+

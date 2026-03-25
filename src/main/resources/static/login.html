@@ -23,9 +23,16 @@
     <section class="panel">
         <form id="login-form">
             <label>Email<input name="email" type="email" required></label>
-            <label>Password<input name="password" type="password" required></label>
+            <label>
+                Password
+                <div class="input-with-button">
+                    <input id="login-password" name="password" type="password" required>
+                    <button class="inline-action" type="button" data-password-target="login-password">Show</button>
+                </div>
+            </label>
             <div class="button-row">
                 <button type="submit">Login</button>
+                <a class="inline-link" href="/forgot-password.html">Forgot password?</a>
                 <a class="inline-link" href="/index.html">Back to registration</a>
             </div>
         </form>

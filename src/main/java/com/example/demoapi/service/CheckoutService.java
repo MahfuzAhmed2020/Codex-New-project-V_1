@@ -1,5 +1,8 @@
 package com.example.demoapi.service;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +34,10 @@ public class CheckoutService {
             "5555555555554444",
             "6011111111111117",
             "378282246310005");
+
+    private static final ZoneId EST_ZONE = ZoneId.of("America/New_York");
+    private static final DateTimeFormatter ORDER_TIME_FORMATTER =
+            DateTimeFormatter.ofPattern("MMMM d, yyyy 'at' h:mm a z", Locale.US);
 
     private final AtomicLong nextCheckoutOrderId = new AtomicLong(1);
     private final List<CheckoutOrder> checkoutOrders = new ArrayList<>();
@@ -71,6 +78,7 @@ public class CheckoutService {
         }
 
         long orderId = nextCheckoutOrderId.getAndIncrement();
+        String orderTimeEst = ZonedDateTime.now(EST_ZONE).format(ORDER_TIME_FORMATTER);
         CheckoutOrder order = new CheckoutOrder(
                 orderId,
                 user.id(),
@@ -81,7 +89,8 @@ public class CheckoutService {
                 cart.items(),
                 cart.totalAmount(),
                 generateTrackingNumber(user.id(), orderId),
-                "CONFIRMED");
+                "CONFIRMED",
+                orderTimeEst);
 
         checkoutOrders.add(order);
         boolean emailSent = orderNotificationService.sendTrackingEmail(user, order);
@@ -97,7 +106,8 @@ public class CheckoutService {
                 order.status(),
                 order.items(),
                 order.totalAmount(),
-                emailSent);
+                emailSent,
+                order.orderTimeEst());
     }
 
     public List<CheckoutOrder> getOrdersForUser(Long userId) {

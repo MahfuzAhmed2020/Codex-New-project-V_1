@@ -13,5 +13,6 @@ public record CheckoutOrder(
         List<CartItem> items,
         BigDecimal totalAmount,
         String trackingNumber,
-        String status) {
+        String status,
+        String orderTimeEst) {
 }

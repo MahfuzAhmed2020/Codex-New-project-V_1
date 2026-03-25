@@ -16,8 +16,10 @@
         <div class="button-row">
             <button class="nav-button" type="button" data-nav="back" data-fallback="/login.html">Back</button>
             <button class="nav-button" type="button" data-nav="forward" data-fallback="/checkout.html">Forward</button>
+            <a class="inline-link" href="/cart.html">Edit cart</a>
             <a class="inline-link" href="/checkout.html">Go to checkout</a>
             <a class="inline-link" href="/order-history.html">Order history</a>
+            <a class="inline-link" href="/profile.html">Profile</a>
             <button id="logout-button" type="button">Logout</button>
         </div>
     </section>
@@ -34,6 +36,7 @@
             <ul id="cart-items" class="cart-list"></ul>
             <p><strong>Total:</strong> <span id="cart-total">$0.00</span></p>
             <div class="button-row">
+                <a class="inline-link" href="/cart.html">Edit cart</a>
                 <a class="inline-link" href="/checkout.html">Proceed to checkout</a>
                 <a class="inline-link" href="/api/docs/urls">View API URLs</a>
             </div>
@@ -43,3 +46,5 @@
 <script src="/app.js"></script>
 </body>
 </html>
+
+

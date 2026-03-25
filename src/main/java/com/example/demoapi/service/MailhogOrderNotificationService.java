@@ -35,6 +35,7 @@ public class MailhogOrderNotificationService implements OrderNotificationService
 
                 Thanks for your order. Your tracking number is %s.
                 Order status: %s
+                Order time (EST): %s
                 Shipping address: %s
 
                 View your order status in the browser:
@@ -43,6 +44,7 @@ public class MailhogOrderNotificationService implements OrderNotificationService
                 user.firstName(),
                 order.trackingNumber(),
                 order.status(),
+                order.orderTimeEst(),
                 order.shippingAddress(),
                 statusUrl));
 

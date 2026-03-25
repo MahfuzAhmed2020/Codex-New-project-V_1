@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account Confirmed | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="account-confirmed">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Account Confirmation</h1>
+            <p>This page confirms the registration email link sent through MailHog.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/index.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/login.html">Forward</button>
+            <span class="pill">Confirm Email</span>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div id="confirm-message" hidden></div>
+        <div class="button-row">
+            <a class="inline-link" href="/login.html">Go to login</a>
+        </div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | Demo Ordering</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-page="profile">
+<main class="page-shell">
+    <section class="hero">
+        <div>
+            <h1>Edit Profile</h1>
+            <p>Update your profile information and email address. If you change your email, a new confirmation email will be sent through MailHog.</p>
+        </div>
+        <div class="button-row">
+            <button class="nav-button" type="button" data-nav="back" data-fallback="/menu.html">Back</button>
+            <button class="nav-button" type="button" data-nav="forward" data-fallback="/order-history.html">Forward</button>
+            <span id="profile-status-pill" class="pill">Loading...</span>
+            <button id="profile-logout-button" type="button">Logout</button>
+        </div>
+    </section>
+
+    <section class="panel">
+        <form id="profile-form">
+            <div class="panel-grid">
+                <label>First name<input name="firstName" required></label>
+                <label>Last name<input name="lastName" required></label>
+                <label>Address<input name="address" required></label>
+                <label>Zip<input name="zip" required></label>
+                <label>Phone<input name="phone" required></label>
+                <label>Email<input name="email" type="email" required></label>
+            </div>
+            <div class="button-row">
+                <button type="submit">Save profile</button>
+                <a class="inline-link" href="/menu.html">Return to menu</a>
+            </div>
+        </form>
+        <div id="profile-message" hidden></div>
+    </section>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>

@@ -5,6 +5,10 @@ Base URL: `http://localhost:8080`
 Frontend pages:
 - `GET /index.html`
 - `GET /login.html`
+- `GET /forgot-password.html`
+- `GET /reset-password.html?token=<token>`
+- `GET /account-confirmed.html?token=<token>`
+- `GET /profile.html`
 - `GET /menu.html`
 - `GET /checkout.html`
 - `GET /confirmation.html`
@@ -14,10 +18,14 @@ Frontend pages:
 Auth:
 - `POST /api/auth/register`
 - `POST /api/auth/login`
+- `POST /api/auth/forgot-password`
+- `POST /api/auth/reset-password`
+- `POST /api/auth/confirm-email`
 
 Users:
 - `GET /api/users`
 - `GET /api/users/{userId}`
+- `PUT /api/users/{userId}/profile`
 - `GET /api/users/{userId}/orders`
 
 Menu:
@@ -39,14 +47,6 @@ Checkout and tracking:
 - `GET /api/tracking/{trackingNumber}`
 - Browser status page: `GET /order-status.html?tracking={trackingNumber}`
 
-Legacy order CRUD:
-- `GET /api/orders`
-- `GET /api/orders/{id}`
-- `POST /api/orders`
-- `PATCH /api/orders/{id}`
-- `PUT /api/orders/{id}`
-- `DELETE /api/orders/{id}`
-
 Sample registration body:
 
 ```json
@@ -62,12 +62,42 @@ Sample registration body:
 }
 ```
 
-Sample login body:
+Sample forgot-password body:
 
 ```json
 {
-  "email": "ava@example.com",
-  "password": "secret123"
+  "email": "ava@example.com"
+}
+```
+
+Sample reset-password body:
+
+```json
+{
+  "token": "paste-token-from-mailhog-link",
+  "password": "newsecret123",
+  "confirmPassword": "newsecret123"
+}
+```
+
+Sample confirm-email body:
+
+```json
+{
+  "token": "paste-token-from-mailhog-link"
+}
+```
+
+Sample profile update body:
+
+```json
+{
+  "firstName": "Ava",
+  "lastName": "Johnson",
+  "address": "500 Park Ave, New York, NY 10022",
+  "zip": "10022",
+  "phone": "555-999-1234",
+  "email": "ava.updated@example.com"
 }
 ```
 

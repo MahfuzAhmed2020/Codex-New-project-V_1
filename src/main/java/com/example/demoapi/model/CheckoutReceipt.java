@@ -13,5 +13,6 @@ public record CheckoutReceipt(
         String status,
         List<CartItem> items,
         BigDecimal totalAmount,
-        boolean emailSent) {
+        boolean emailSent,
+        String orderTimeEst) {
 }
